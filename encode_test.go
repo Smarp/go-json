@@ -40,7 +40,11 @@ type Optionals struct {
 	Sto struct{} `json:"sto,omitempty"`
 
 	Tr time.Time `json:"tr"`
+	Tf time.Time `json:"tf,omitempty"`
 	To time.Time `json:"to,omitempty"`
+
+	PTr *time.Time `json:"ptr"`
+	PTo *time.Time `json:"pto,omitempty"`
 }
 
 var optionalsExpected = `{
@@ -53,7 +57,9 @@ var optionalsExpected = `{
  "ur": 0,
  "str": {},
  "sto": {},
- "tr": "0001-01-01T00:00:00Z"
+ "tr": "0001-01-01T00:00:00Z",
+ "tf": "1970-01-01T02:00:01.000000001+02:00",
+ "ptr": null
 }`
 
 func TestOmitEmpty(t *testing.T) {
@@ -61,6 +67,7 @@ func TestOmitEmpty(t *testing.T) {
 	o.Sw = "something"
 	o.Mr = map[string]interface{}{}
 	o.Mo = map[string]interface{}{}
+	o.Tf = time.Unix(1, 1)
 
 	got, err := MarshalIndent(&o, "", " ")
 	if err != nil {

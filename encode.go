@@ -279,10 +279,15 @@ type zeroer interface {
 	IsZero() bool
 }
 func isEmptyValue(v reflect.Value) bool {
+	kind := v.Kind()
+	switch kind {
+	case reflect.Interface, reflect.Ptr:
+		return v.IsNil()
+	}
 	if z, ok := v.Interface().(zeroer); ok {
 		return z.IsZero()
 	}
-	switch v.Kind() {
+	switch kind {
 	case reflect.Array, reflect.Map, reflect.Slice, reflect.String:
 		return v.Len() == 0
 	case reflect.Bool:
@@ -293,8 +298,6 @@ func isEmptyValue(v reflect.Value) bool {
 		return v.Uint() == 0
 	case reflect.Float32, reflect.Float64:
 		return v.Float() == 0
-	case reflect.Interface, reflect.Ptr:
-		return v.IsNil()
 	}
 	return false
 }
